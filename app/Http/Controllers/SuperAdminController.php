@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class SuperAdminController extends Controller
+{
+    // menampilkan halaman dashboard superadmin
+    public function dashboard()
+    {
+        return view('superadmin.dashboard');
+    }
+}

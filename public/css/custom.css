@@ -1,0 +1,148 @@
+/* ===============================
+   SIDEBAR IMPROVEMENT
+=============================== */
+.sidebar .nav-item .nav-link i {
+    margin-right: 10px;
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+
+/* ===============================
+   SWEETALERT2 (SWAL) THEME
+=============================== */
+
+/* Tombol Konfirmasi (Hijau) */
+.swal2-confirm {
+  background-color: #4C9950 !important;
+  border: none !important;
+}
+
+.swal2-confirm:hover {
+  background-color: #506649 !important;
+}
+
+/* Tombol Batal (Putih Abu) */
+.swal2-cancel {
+  background-color: #f5f5f5 !important;
+  border: 1px solid #ccc !important;
+  color: #000 !important;
+  font-weight: bold;
+}
+
+.swal2-cancel:hover {
+  background-color: #e0e0e0 !important;
+  color: #000 !important;
+}
+
+/* Tombol Swal ukuran sama */
+.swal-btn {
+  width: 100px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Jarak antar tombol Swal */
+.swal2-actions .btn {
+  margin: 0 6px !important;
+}
+
+/* Title Swal dikecilkan */
+.swal2-title {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+
+/* ===============================
+   ICON FORM INPUT
+=============================== */
+.input-group-text i {
+    color: #4C9950 !important; /* hijau tema */
+}
+
+
+/* ===============================
+   MODAL HEADER CUSTOM THEME
+=============================== */
+
+/* Header modal hijau full */
+.modal-header {
+    background-color: #506649 !important;
+    border-bottom: none !important;
+    color: #fff !important;
+}
+
+/* Judul modal putih */
+.modal-header .modal-title {
+    color: #fff !important;
+    font-weight: 600;
+}
+
+/* Tombol close putih */
+.modal-header .close {
+    color: #fff !important;
+    opacity: 1 !important;
+}
+
+.modal-header .close:hover {
+    color: #e6e6e6 !important;
+}
+
+/* Optional: icon input kalau mau pakai class */
+.icon-green {
+    color: #506649 !important;
+}
+
+
+
+.card-header-transaksi {
+    background-color: #EBF2E8;
+}
+
+/* Collapse item aktif teks hijau */
+.collapse-item.active {
+    color: #506649 !important; /* teks hijau */
+    font-weight: 600; /* opsional, biar lebih terlihat */
+}
+
+/* Hover item */
+    .collapse-item:hover {
+    color: #4C9950 !important; /* teks hijau sedikit terang saat hover */
+}
+
+
+
+.supplier-item {
+    margin-bottom: 22px;
+}
+
+.supplier-name {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    color: #4a4a4a;
+}
+
+.progress-bar-custom {
+    width: 100%;
+    height: 12px;
+    background: #e8e8e8;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 20px;
+    transition: width .4s ease-in-out;
+}
+
+.supplier-value {
+    float: right;
+    margin-top: 6px;
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
