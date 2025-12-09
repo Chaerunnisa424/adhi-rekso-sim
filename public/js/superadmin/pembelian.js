@@ -14,9 +14,11 @@ function updateTabel() {
     const tbody = document.querySelector("#tabelTransaksi tbody");
     tbody.innerHTML = "";
     let total = 0;
+
     daftarProduk.forEach((item, index) => {
         const subtotal = item.jumlah * item.harga;
         total += subtotal;
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${item.kode}</td>
@@ -32,6 +34,7 @@ function updateTabel() {
         `;
         tbody.appendChild(tr);
     });
+
     document.getElementById("totalBayar").textContent = formatRupiah(total);
 }
 
@@ -40,34 +43,48 @@ function hapusItem(index) {
     updateTabel();
 }
 
+/* =======================================
+   AUTO ISI HARGA SAAT PRODUK DIPILIH
+======================================= */
+document.getElementById("kode_produk").addEventListener("change", function () {
+    const selected = this.options[this.selectedIndex];
+    const hargaDefault = selected.getAttribute("data-harga");
+
+    document.getElementById("harga_beli").value = hargaDefault || 0;
+});
+
+/* =======================================
+   TAMBAH ITEM PRODUK
+======================================= */
 document.getElementById("formTambahProduk").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    const kode = document.getElementById("kode_produk").value.trim();
-    const jumlahStr = document.getElementById("jumlah").value.trim();
-    const hargaRaw = document.getElementById("harga_beli").value.trim();
+    const kodeSelect = document.getElementById("kode_produk");
+    const kode = kodeSelect.value;
 
-    // Bersihkan format ribuan dari input harga jika ada
-    const hargaClean = hargaRaw.replace(/[.,]/g, '');
-    const jumlah = parseInt(jumlahStr, 10);
-    const harga = parseFloat(hargaClean);
-
-    if (!kode || isNaN(jumlah) || jumlah < 1 || isNaN(harga) || harga < 0) {
-        alert('Data produk tidak valid!');
+    if (!kode) {
+        alert("Pilih produk terlebih dahulu!");
         return;
     }
 
-    // Cek apakah produk sudah ada di daftar
+    const nama = kodeSelect.options[kodeSelect.selectedIndex].text.split(" - ")[1];
+    const jumlah = parseInt(document.getElementById("jumlah").value.trim());
+    const harga = parseFloat(document.getElementById("harga_beli").value.trim());
+
+    if (!jumlah || jumlah < 1 || isNaN(harga) || harga < 0) {
+        alert("Data produk tidak valid!");
+        return;
+    }
+
+    // Jika produk sudah ada → update
     const index = daftarProduk.findIndex(item => item.kode === kode);
-    if(index !== -1){
-        // Update jumlah dan harga
+    if (index !== -1) {
         daftarProduk[index].jumlah += jumlah;
         daftarProduk[index].harga = harga;
     } else {
-        // Tambah produk baru
         daftarProduk.push({
             kode,
-            nama: kode, // Bisa diganti nanti dengan fetch nama produk dari server
+            nama,
             jumlah,
             harga
         });
@@ -75,11 +92,13 @@ document.getElementById("formTambahProduk").addEventListener("submit", function(
 
     updateTabel();
 
-    // Reset form tambah produk dan fokus input kode_produk
     this.reset();
     document.getElementById("kode_produk").focus();
 });
 
+/* =======================================
+   RESET FORM
+======================================= */
 document.getElementById("btnReset").addEventListener("click", function() {
     daftarProduk = [];
     updateTabel();
@@ -87,13 +106,15 @@ document.getElementById("btnReset").addEventListener("click", function() {
     document.getElementById("formTambahProduk").reset();
 });
 
+/* =======================================
+   SIMPAN TRANSAKSI KE BACKEND
+======================================= */
 document.getElementById("btnSimpan").addEventListener("click", function() {
     if (daftarProduk.length === 0) {
         alert("Tambahkan produk terlebih dahulu!");
         return;
     }
 
-    // Ambil data header transaksi
     const kode_transaksi = document.getElementById("kode_transaksi").value.trim();
     const tgl_transaksi = document.getElementById("tgl_transaksi").value.trim();
     const supplier = document.getElementById("supplier").value.trim();
@@ -104,7 +125,6 @@ document.getElementById("btnSimpan").addEventListener("click", function() {
         return;
     }
 
-    // Buat payload data untuk dikirim ke backend
     const payload = {
         kode_transaksi,
         tgl_transaksi,
@@ -125,12 +145,7 @@ document.getElementById("btnSimpan").addEventListener("click", function() {
         },
         body: JSON.stringify(payload)
     })
-    .then(res => {
-        if (!res.ok) {
-            throw new Error("Network response was not ok");
-        }
-        return res.json();
-    })
+    .then(res => res.json())
     .then(data => {
         if(data.status === 'success'){
             alert(data.message);

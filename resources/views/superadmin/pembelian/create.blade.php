@@ -336,20 +336,31 @@
                 <div class="card-body">
                     <form id="formTambahProduk" onsubmit="return false;">
                         <div class="form-group">
-                            <label for="kode_produk">Kode Produk</label>
-                            <input type="text" class="form-control" id="kode_produk" name="kode_produk" placeholder="Masukkan kode produk" required>
+                            <label for="kode_produk">Produk</label>
+                            <select class="form-control" id="kode_produk" required>
+                                <option value="">-- Pilih Produk --</option>
+                                @foreach($produk as $p)
+                                    <option value="{{ $p->kode_produk }}" data-harga="{{ $p->harga_beli }}">
+                                        {{ $p->kode_produk }} - {{ $p->nama_produk }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+
                         <div class="form-group">
                             <label for="jumlah">Jumlah</label>
-                            <input type="number" class="form-control" id="jumlah" name="jumlah" placeholder="Jumlah" min="1" required>
+                            <input type="number" class="form-control" id="jumlah" min="1" required>
                         </div>
+
                         <div class="form-group">
                             <label for="harga_beli">Harga Beli</label>
-                            <input type="number" class="form-control" id="harga_beli" name="harga_beli" placeholder="Harga beli" min="0" required>
-                            <small class="form-text text-muted">Harga default dari data produk bisa diubah sesuai kebutuhan transaksi.</small>
+                            <input type="number" class="form-control" id="harga_beli" min="0" required>
+                            <small class="form-text text-muted">Harga bisa disesuaikan jika supplier berubah.</small>
                         </div>
+
                         <button type="submit" class="btn btn-primary btn-block">Tambah</button>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -474,7 +485,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Aktifkan semua dropdown collapse jika belum
             $('.collapse').collapse({
-                toggle: false
+                toggle:
             });
 
             // Tambahan: pastikan klik sidebar bekerja

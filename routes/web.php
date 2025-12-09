@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\KategoriProdukController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
@@ -80,6 +81,20 @@ Route::prefix('superadmin/pembelian')->name('superadmin.pembelian.')->group(func
     Route::get('/', [PembelianController::class, 'index'])->name('index');
     Route::get('/create', [PembelianController::class, 'create'])->name('create');
     Route::post('/store', [PembelianController::class, 'store'])->name('store');
+});
+
+// Route API tambahan untuk ambil nama produk
+Route::get('/produk/cari/{kode}', function ($kode) {
+    $produk = DB::table('produk')->where('kode_produk', $kode)->first();
+
+    if (!$produk) {
+        return response()->json(['status' => false]);
+    }
+
+    return response()->json([
+        'status' => true,
+        'nama_produk' => $produk->nama_produk
+    ]);
 });
 
 Route::prefix('superadmin/penjualan')->name('superadmin.penjualan.')->group(function () {
