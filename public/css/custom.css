@@ -146,3 +146,54 @@
     color: #4a4a4a;
 }
 
+
+/* Samakan tinggi Select2 dengan Bootstrap form-control */
+.select2-container .select2-selection--single {
+    height: 38px !important;
+    padding: 0 12px !important;
+    border: 1px solid #d1d3e2 !important;
+    border-radius: 4px !important;
+    background-color: #f0f0f0 !important; /* background abu-abu */
+    color: #333 !important; /* warna teks */
+    position: relative; /* agar tombol clear absolute positioning */
+}
+
+/* Samakan tinggi teks di dalam Select2 dan beri padding kanan untuk tombol clear */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 38px !important;
+    color: #333 !important;
+    padding-right: 35px !important; /* space untuk tombol silang */
+}
+
+/* Ukuran tombol dropdown agar tidak kependekan */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px !important;
+    right: 8px;
+}
+
+/* Saat dropdown aktif/fokus, hilangkan warna biru dan ganti border + background abu-abu */
+.select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: #999999 !important; /* abu-abu gelap */
+    background-color: #e0e0e0 !important; /* abu-abu */
+    box-shadow: none !important; /* hilangkan shadow biru */
+}
+
+/* Hover dan highlight option warna abu-abu */
+.select2-results__option--highlighted[aria-selected] {
+    background-color: #ccc !important;
+    color: #000 !important;
+}
+
+/* Posisi tombol remove (×) agar vertikal center */
+.select2-container--default .select2-selection__clear {
+    height: 38px !important;
+    line-height: 38px !important;
+    font-size: 18px !important;
+    position: absolute !important;
+    top: 50% !important;
+    right: 30px !important;
+    transform: translateY(-50%) !important;
+    cursor: pointer !important;
+    color: #000000 !important;
+    margin: 0 !important;
+}

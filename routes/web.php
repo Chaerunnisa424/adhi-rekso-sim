@@ -7,7 +7,8 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PembelianController;
-
+use App\Http\Controllers\PenjualanController;
+use App\Http\Controllers\PengeluaranController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -79,7 +80,10 @@ Route::prefix('superadmin/user')->name('superadmin.user.')->group(function () {
 
 Route::prefix('superadmin/pembelian')->name('superadmin.pembelian.')->group(function () {
     Route::get('/', [PembelianController::class, 'index'])->name('index');
+    Route::get('/show', [PembelianController::class, 'show'])->name('show');
     Route::get('/create', [PembelianController::class, 'create'])->name('create');
+    Route::get('/edit', [PembelianController::class, 'edit'])->name('edit');
+    Route::delete('/{id}', [PembelianController::class, 'destroy'])->name('destroy');
     Route::post('/store', [PembelianController::class, 'store'])->name('store');
 });
 
@@ -98,15 +102,23 @@ Route::get('/produk/cari/{kode}', function ($kode) {
 });
 
 Route::prefix('superadmin/penjualan')->name('superadmin.penjualan.')->group(function () {
-    Route::view('/', 'superadmin.penjualan.index')->name('index');
-    Route::view('/create', 'superadmin.penjualan.create')->name('create');
+    Route::get('/', [PenjualanController::class, 'index'])->name('index');
+    Route::get('/show/{id}', [PenjualanController::class, 'show'])->name('show');
+    Route::get('/create', [PenjualanController::class, 'create'])->name('create');
+    Route::post('/store', [PenjualanController::class, 'store'])->name('store');
+    Route::get('/edit/{id}', [PenjualanController::class, 'edit'])->name('edit');
+    Route::delete('/{id}', [PenjualanController::class, 'destroy'])->name('destroy');
 });
 
 
-Route::prefix('superadmin/pengeluaran')->name('superadmin.pengeluaran.')->group(function () {
-    Route::view('/', 'superadmin.pengeluaran.index')->name('index');
-    Route::view('/create', 'superadmin.pengeluaran.create')->name('create');
-});
+
+Route::get('/superadmin/pengeluaran', [PengeluaranController::class, 'index'])->name('superadmin.pengeluaran.index');
+Route::get('/superadmin/pengeluaran/create', [PengeluaranController::class, 'create'])->name('superadmin.pengeluaran.create');
+Route::post('/pengeluaran/store', [PengeluaranController::class, 'store'])->name('pengeluaran.store');
+Route::delete('/superadmin/pengeluaran/{id}',
+    [PengeluaranController::class, 'destroy'])
+    ->name('superadmin.pengeluaran.destroy');
+
 
 Route::prefix('superadmin/laporan')->name('superadmin.laporan.')->group(function () {
     Route::view('/LaporanPembelian', 'superadmin.laporan.LaporanPembelian')->name('LaporanPembelian');

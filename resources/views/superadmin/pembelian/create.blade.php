@@ -20,6 +20,8 @@
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     <!-- di dalam <head> -->
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 
 
 </head>
@@ -337,7 +339,7 @@
                     <form id="formTambahProduk" onsubmit="return false;">
                         <div class="form-group">
                             <label for="kode_produk">Produk</label>
-                            <select class="form-control" id="kode_produk" required>
+                            <select class="form-control select2" id="kode_produk" required>
                                 <option value="">-- Pilih Produk --</option>
                                 @foreach($produk as $p)
                                     <option value="{{ $p->kode_produk }}" data-harga="{{ $p->harga_beli }}">
@@ -345,6 +347,7 @@
                                     </option>
                                 @endforeach
                             </select>
+
                         </div>
 
                         <div class="form-group">
@@ -463,63 +466,70 @@
     </div>
 </div>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- jQuery -->
+<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
 
-    <!-- Core plugin JavaScript -->
-    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+<!-- Bootstrap -->
+<script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-    <!-- Custom scripts for all pages -->
-    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+<!-- Plugin tambahan -->
+<script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
-    <!-- Page level plugins -->
-    <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
+<!-- Template script -->
+<script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
-    <!-- Page level custom scripts -->
-    <script src="{{ asset('js/demo/chart-area-demo.js') }}"></script>
-    <script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
+<!-- Chart.js -->
+<script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
+<script src="{{ asset('js/demo/chart-area-demo.js') }}"></script>
+<script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
 
-    <!-- Tambahan: pastikan jQuery & Bootstrap collapse aktif -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Aktifkan semua dropdown collapse jika belum
-            $('.collapse').collapse({
-                toggle:
-            });
+<!-- Select2 JS (WAJIB untuk pencarian dropdown produk) -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-            // Tambahan: pastikan klik sidebar bekerja
-            $('[data-toggle="collapse"]').on('click', function (e) {
-                e.preventDefault();
-                var target = $(this).attr('data-target');
-                $(target).collapse('toggle');
-            });
-        });
-    </script>
-   <script>
-    $(document).ready(function(){
-        $('.editBtn').click(function(){
-            var id = $(this).data('id');
-            var nama = $(this).data('nama');
+<!-- Sidebar collapse fix -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-            // Set value input modal
-            $('#edit_nama_kategori').val(nama);
+    // Perbaikan collapse sidebar
+    $('.collapse').collapse({ toggle: false });
 
-            // Set action form ke route update dengan ID kategori
-            $('#editForm').attr('action', '/superadmin/kategoriproduk/update/' + id);
-
-            // Tampilkan modal
-            $('#editKategoriModal').modal('show');
-        });
+    // Pastikan sidebar bisa toggle
+    $('[data-toggle="collapse"]').on('click', function (e) {
+        e.preventDefault();
+        var target = $(this).attr('data-target');
+        $(target).collapse('toggle');
     });
-    </script>
-    <script>
-    const STORE_URL = "{{ route('superadmin.pembelian.store') }}";
-    </script>
-    <script src="{{ asset('js/superadmin/pembelian.js') }}"></script>
 
+});
+</script>
 
+<!-- URL untuk simpan pembelian -->
+<script>
+const STORE_URL = "{{ route('superadmin.pembelian.store') }}";
+</script>
 
+<!-- File JS pembelian -->
+<script src="{{ asset('js/superadmin/pembelian.js') }}"></script>
+
+<!-- Select2 + Auto isi harga produk -->
+<script>
+$(document).ready(function() {
+
+    // Aktifkan Select2
+    $('#kode_produk').select2({
+        placeholder: "Cari produk...",
+        allowClear: true,
+        width: "100%"
+    });
+
+    // Auto fill harga
+    $('#kode_produk').on('change', function() {
+        let harga = $(this).find(':selected').data('harga');
+        $('#harga_beli').val(harga ?? 0);
+    });
+
+});
+</script>
 
 </body>
 </html>

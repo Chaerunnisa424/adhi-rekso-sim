@@ -331,80 +331,96 @@
 
     <div class="row">
 
-        <!-- Form Tambah Produk -->
-        <div class="col-md-4">
+    <!-- Form Tambah Produk -->
+     <div class="col-md-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Tambah Produk</h6>
                 </div>
                 <div class="card-body">
-                    <form id="formTambahProduk">
-
-                        <!-- Kode Produk -->
+                    <form id="formTambahProduk" onsubmit="return false;">
                         <div class="form-group">
-                            <label for="kode_produk">Kode Produk</label>
-                            <input type="text" class="form-control" id="kode_produk"
-                                   placeholder="Masukkan kode produk" required>
-                        </div>
+                            <label for="kode_produk">Produk</label>
+                            <select class="form-control select2" id="kode_produk" required>
+                                <option value="">-- Pilih Produk --</option>
+                                @foreach($produk as $p)
+                                    <option value="{{ $p->kode_produk }}" data-harga="{{ $p->harga_beli }}">
+                                        {{ $p->kode_produk }} - {{ $p->nama_produk }}
+                                    </option>
+                                @endforeach
+                            </select>
 
-                        <!-- Jumlah -->
-                        <div class="form-group">
-                            <label for="jumlah">Jumlah</label>
-                            <input type="number" class="form-control" id="jumlah"
-                                   placeholder="Jumlah" required>
-                        </div>
+                    </div>
 
-                        <button type="submit" class="btn btn-primary btn-block">Tambah</button>
+                    <div class="form-group">
+                        <label for="jumlah">Jumlah</label>
+                        <input type="number" class="form-control" id="jumlah"
+                            placeholder="Jumlah Terjual" required>
+                    </div>
 
-                    </form>
-                </div>
+                    <button type="button" id="btnTambah" class="btn btn-primary btn-block">
+                        Tambah
+                    </button>
+
+                </form>
             </div>
         </div>
+    </div>
 
-        <!-- Tabel Output Transaksi -->
-        <div class="col-md-8">
-            <div class="card shadow mb-4">
+<!-- Tabel Output Transaksi -->
+<div class="col-md-8">
+    <div class="card shadow mb-4">
 
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Daftar Produk</h6>
-                </div>
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Daftar Produk</h6>
+        </div>
 
-                <div class="card-body">
+        <div class="card-body">
 
-                    <!-- Tabel -->
-                    <div class="table-responsive">
-                        <table class="table table-bordered text-left" id="tabelTransaksi" width="100%" cellspacing="0">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Kode Produk</th>
-                                    <th>Nama Produk</th>
-                                    <th>Jumlah</th>
-                                    <th>Harga (Rp)</th>
-                                    <th>Subtotal (Rp)</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data dari JS -->
-                            </tbody>
-                        </table>
-                    </div>
+            <!-- Tabel -->
+            <div class="table-responsive">
+                <table class="table table-bordered text-left" id="tabelTransaksi" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Kode Produk</th>
+                            <th>Nama Produk</th>
+                            <th>Jumlah</th>
+                            <th>Harga Jual (Rp)</th>
+                            <th>Subtotal (Rp)</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data dari JS -->
+                    </tbody>
+                </table>
+            </div>
 
-                    <!-- Total Bayar -->
-                    <div class="mt-3 p-3"
-                        style="background-color: #EBF2E8; font-weight:bold; text-align:right; font-size:2rem; color:#333;">
-                        Total Bayar: <span id="totalBayar">Rp 0,-</span>
-                    </div>
+            <!-- Total Bayar -->
+            <div class="mt-3 p-3"
+                style="background-color: #EBF2E8; font-weight:bold; text-align:right; font-size:2rem; color:#333;">
+                Total Bayar: <span id="totalBayar">Rp 0,-</span>
+            </div>
 
-                    <!-- Tombol Simpan & Reset -->
-                    <div class="mt-3 text-right">
-                        <button class="btn btn-primary" id="btnSimpan">
-                            <i class="fas fa-save mr-1"></i> Simpan
-                        </button>
-                        <button class="btn btn-warning" id="btnReset">
-                            <i class="fas fa-redo mr-1"></i> Reset
-                        </button>
-                    </div>
+            <!-- Tombol Simpan & Reset -->
+            <div class="mt-3 text-right">
+                <button class="btn btn-primary" id="btnSimpan">
+                    <i class="fas fa-save mr-1"></i> Simpan
+                </button>
+                <button class="btn btn-warning" id="btnReset">
+                    <i class="fas fa-redo mr-1"></i> Reset
+                </button>
+            </div>
+
+                    <!-- FORM HIDDEN UNTUK SIMPAN -->
+                    <form id="formSimpan" action="{{ route('superadmin.penjualan.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="kode_transaksi" id="input_kode_transaksi">
+                        <input type="hidden" name="tgl_penjualan" id="input_tgl_penjualan">
+                        <input type="hidden" name="total_harga" id="input_total_harga">
+                        <input type="hidden" name="detail_penjualan" id="input_items">
+                    </form>
+
 
                 </div>
             </div>
@@ -413,7 +429,6 @@
     </div>
 </div>
 <!-- End Page Content -->
-
 
 
 <!-- ===================================================================================================================================================== -->
@@ -500,24 +515,8 @@
             });
         });
     </script>
-   <script>
-    $(document).ready(function(){
-        $('.editBtn').click(function(){
-            var id = $(this).data('id');
-            var nama = $(this).data('nama');
 
-            // Set value input modal
-            $('#edit_nama_kategori').val(nama);
-
-            // Set action form ke route update dengan ID kategori
-            $('#editForm').attr('action', '/superadmin/kategoriproduk/update/' + id);
-
-            // Tampilkan modal
-            $('#editKategoriModal').modal('show');
-        });
-    });
-    </script>
-    <script src="{{ asset('js/superadmin/pembelian.js') }}"></script>
+    <script src="{{ asset('js/superadmin/penjualan.js') }}"></script>
 
 
 

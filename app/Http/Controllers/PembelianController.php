@@ -6,9 +6,40 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use App\Models\Pembelian; // <---- Pastikan ini ada
+use App\Models\Supplier;
 
 class PembelianController extends Controller
 {
+
+public function index(Request $request)
+{
+    $query = Pembelian::with(['supplier', 'detail']); // eager load relasi
+
+    // Filter berdasarkan supplier
+    if ($request->filled('supplier')) {
+        $query->where('id_supplier', $request->supplier);
+    }
+
+    // Filter berdasarkan tanggal pembelian
+    if ($request->filled('tanggal')) {
+        $query->whereDate('tgl_pembelian', $request->tanggal);
+    }
+
+    // Limit jumlah data per halaman (default 10)
+    $limit = $request->input('limit', 10);
+
+    // Ambil data dengan urutan terbaru
+    $pembelian = $query->orderBy('tgl_pembelian', 'desc')->paginate($limit);
+
+    // Data supplier untuk dropdown filter
+    $suppliers = Supplier::all();
+
+    // Kirim data ke view
+    return view('superadmin.pembelian.index', compact('pembelian', 'suppliers'));
+}
+
+
     public function create()
     {
         $suppliers = DB::table('supplier')->get();
@@ -16,6 +47,42 @@ class PembelianController extends Controller
 
         return view('superadmin.pembelian.create', compact('suppliers', 'produk'));
     }
+
+    public function destroy($id)
+{
+    DB::beginTransaction();
+
+    try {
+        // Ambil data pembelian beserta detailnya
+        $pembelian = Pembelian::with('detail')->findOrFail($id);
+
+        // Kembalikan stok produk sesuai jumlah pembelian sebelum hapus
+        foreach ($pembelian->detail as $detail) {
+            DB::table('produk')
+                ->where('id_produk', $detail->id_produk)
+                ->decrement('stok', $detail->jumlah);
+        }
+
+        // Hapus detail pembelian
+        DB::table('detail_pembelian')->where('id_pembelian', $id)->delete();
+
+        // Hapus pembelian
+        $pembelian->delete();
+
+        DB::commit();
+
+        return redirect()->route('superadmin.pembelian.index')
+            ->with('success', 'Transaksi pembelian berhasil dihapus.');
+    } catch (Exception $e) {
+        DB::rollBack();
+
+        Log::error("Gagal menghapus pembelian: " . $e->getMessage());
+
+        return redirect()->route('superadmin.pembelian.index')
+            ->with('error', 'Gagal menghapus transaksi pembelian: ' . $e->getMessage());
+    }
+}
+
 
     public function store(Request $request)
     {
@@ -75,12 +142,14 @@ class PembelianController extends Controller
                 $detailPembelian[] = [
                     'id_pembelian' => $idPembelian,
                     'id_produk' => $produk->id_produk,
+                    'kode_produk' => $produk->kode_produk, // <--- WAJIB
                     'jumlah' => $item['jumlah'],
                     'harga_beli' => $item['harga_beli'],
                     'subtotal' => $item['jumlah'] * $item['harga_beli'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
+
 
                 // Update stok produk
                 DB::table('produk')

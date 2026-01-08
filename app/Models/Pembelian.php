@@ -12,13 +12,20 @@ class Pembelian extends Model
     protected $fillable = [
         'kode_transaksi',
         'tgl_pembelian',
-        'supplier',
+        'id_supplier',  // <-- ini harus sesuai nama kolom di DB
         'catatan',
         'total_bayar',
     ];
 
-    public $timestamps = true; // Kalau kolom created_at dan updated_at ada
+    public $timestamps = true;
 
+    // Relasi ke supplier
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'id_supplier');
+    }
+
+    // Relasi ke detail pembelian
     public function detail()
     {
         return $this->hasMany(DetailPembelian::class, 'id_pembelian');

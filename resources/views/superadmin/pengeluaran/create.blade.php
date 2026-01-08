@@ -306,80 +306,81 @@
         <div class="card-body">
 
             <!-- FORM UI SAJA (TANPA BACKEND) -->
-            <form action="#" method="POST">
+            <form action="{{ route('pengeluaran.store') }}" method="POST">
+    @csrf
 
-                <div class="form-row">
+    <div class="form-row">
 
-                    <!-- Tanggal -->
-                    <div class="form-group col-md-4">
-                        <label><strong>Tanggal Pengeluaran</strong></label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="fas fa-calendar-alt"></i>
-                                </span>
-                            </div>
-                            <input type="date" class="form-control" required>
-                        </div>
-                    </div>
-
-                    <!-- Kategori -->
-                    <div class="form-group col-md-4">
-                        <label><strong>Kategori</strong></label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="fas fa-list"></i>
-                                </span>
-                            </div>
-                            <select class="form-control" required>
-                                <option value="">-- Pilih Kategori --</option>
-                                <option>Operasional</option>
-                                <option>Gaji Karyawan</option>
-                                <option>Listrik / Internet</option>
-                                <option>Pembelian Barang</option>
-                                <option>Lainnya</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Nominal -->
-                    <div class="form-group col-md-4">
-                        <label><strong>Nominal (Rp)</strong></label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="fas fa-money-bill-wave"></i>
-                                </span>
-                            </div>
-                            <input type="number" class="form-control" placeholder="Masukkan nominal" required>
-                        </div>
-                    </div>
-
+        <!-- Tanggal -->
+        <div class="form-group col-md-4">
+            <label><strong>Tanggal Pengeluaran</strong></label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fas fa-calendar-alt"></i>
+                    </span>
                 </div>
+                <input type="date" name="tgl_pengeluaran" class="form-control" required>
+            </div>
+        </div>
 
-                <!-- Keterangan -->
-                <div class="form-group">
-                    <label><strong>Keterangan</strong></label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="fas fa-pencil-alt"></i>
-                            </span>
-                        </div>
-                        <textarea class="form-control" rows="3"
-                                  placeholder="Tuliskan keterangan pengeluaran..." required></textarea>
-                    </div>
+        <!-- Kategori -->
+        <div class="form-group col-md-4">
+            <label><strong>Kategori</strong></label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fas fa-list"></i>
+                    </span>
                 </div>
+                <select name="kategori" class="form-control" required>
+                    <option value="">-- Pilih Kategori --</option>
+                    <option>Operasional</option>
+                    <option>Gaji Karyawan</option>
+                    <option>Listrik / Internet</option>
+                    <option>Pembelian Barang</option>
+                    <option>Lainnya</option>
+                </select>
+            </div>
+        </div>
 
-                <!-- Tombol Simpan -->
-                <div class="text-right">
-                    <button type="button" class="btn btn-primary px-4 shadow-sm">
-                        <i class="fas fa-save mr-1"></i> Simpan Data
-                    </button>
+        <!-- Nominal -->
+        <div class="form-group col-md-4">
+            <label><strong>Nominal (Rp)</strong></label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </span>
                 </div>
+                <input type="number" name="nominal" class="form-control" placeholder="Masukkan nominal" required>
+            </div>
+        </div>
 
-            </form>
+    </div>
+
+    <!-- Keterangan -->
+    <div class="form-group">
+        <label><strong>Keterangan</strong></label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="fas fa-pencil-alt"></i>
+                </span>
+            </div>
+            <textarea name="keterangan" class="form-control" rows="3" placeholder="Tuliskan keterangan pengeluaran..." required></textarea>
+        </div>
+    </div>
+
+    <!-- Tombol Simpan -->
+    <div class="text-right">
+        <button type="submit" class="btn btn-primary px-4 shadow-sm">
+            <i class="fas fa-save mr-1"></i> Simpan Data
+        </button>
+    </div>
+
+</form>
+
 
         </div>
     </div>

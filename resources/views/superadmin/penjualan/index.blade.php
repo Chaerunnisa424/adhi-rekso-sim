@@ -298,20 +298,21 @@
     <!-- Filter Header -->
     <div class="card shadow mb-4 card-header-transaksi">
         <div class="card-body">
-            <form id="filterForm">
+            <form method="GET" action="{{ route('superadmin.penjualan.index') }}">
                 <div class="form-row align-items-end">
 
                     <!-- Filter Kode Transaksi -->
                     <div class="form-group col-auto mr-3">
                         <label for="filter_kode">Kode Transaksi</label>
-                        <input type="text" class="form-control" id="filter_kode" style="width:250px;"
-                               placeholder="Masukkan kode transaksi">
+                        <input type="text" name="filter_kode" class="form-control" style="width:250px;"
+                            placeholder="Masukkan kode transaksi" value="{{ request('filter_kode') }}">
                     </div>
 
                     <!-- Filter Tanggal -->
                     <div class="form-group col-auto mr-3">
                         <label for="filter_tanggal">Tanggal</label>
-                        <input type="date" class="form-control" id="filter_tanggal" style="width:250px;">
+                        <input type="date" name="filter_tanggal" class="form-control" style="width:250px;"
+                            value="{{ request('filter_tanggal') }}">
                     </div>
 
                     <!-- Tombol -->
@@ -335,11 +336,18 @@
             <!-- Show Entries -->
             <div class="form-inline">
                 <label class="mr-2">Show</label>
-                <select class="form-control form-control-sm mr-2" id="showEntries">
-                    <option>5</option>
-                    <option>10</option>
-                    <option>15</option>
-                </select>
+
+                <form method="GET" action="{{ route('superadmin.penjualan.index') }}">
+                    <select name="show" class="form-control form-control-sm mr-2" onchange="this.form.submit()">
+                        <option value="5"  {{ request('show') == 5  ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ request('show') == 10 ? 'selected' : '' }}>10</option>
+                        <option value="15" {{ request('show') == 15 ? 'selected' : '' }}>15</option>
+                    </select>
+
+                    <input type="hidden" name="filter_kode" value="{{ request('filter_kode') }}">
+                    <input type="hidden" name="filter_tanggal" value="{{ request('filter_tanggal') }}">
+                </form>
+
                 <label>entries</label>
             </div>
         </div>
@@ -348,7 +356,7 @@
 
             <!-- Table -->
             <div class="table-responsive">
-                <table class="table table-bordered text-left" id="tabelTransaksi" width="100%" cellspacing="0">
+                <table class="table table-bordered text-left" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
                             <th>No</th>
@@ -356,30 +364,54 @@
                             <th>Tanggal</th>
                             <th>User</th>
                             <th>Total Bayar (Rp)</th>
-                            <th>Aksi</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <!-- Contoh data -->
+                        @forelse ($data as $index => $row)
                         <tr>
-                            <td>1</td>
-                            <td>TRX202511140001</td>
-                            <td>2025-11-14</td>
-                            <td>Admin</td>
-                            <td>Rp 1.500.000</td>
-                            <td>
-                                <button class="btn btn-sm p-1" title="Detail" style="background-color:#558049; color:#fff; border:none;">
+                            <td>{{ $data->firstItem() + $index }}</td>
+                            <td>{{ $row->kode_transaksi }}</td>
+                            <td>{{ $row->tgl_penjualan }}</td>
+                            <td>{{ $row->nama_user ?? '-' }}</td>
+                            <td>Rp {{ number_format($row->total_bayar, 0, ',', '.') }}</td>
+
+                            <td class="text-left">
+
+                                <!-- Detail -->
+                                <a href="#" class="btn btn-sm p-1 btn-detail"
+                                    data-id="{{ $row->id_penjualan }}"
+                                    style="background-color:#558049; color:#fff; border:none;"
+                                    title="Detail">
                                     <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-warning btn-sm p-1" title="Edit">
+                                </a>
+
+                                <!-- Edit -->
+                                <a href="#" class="btn btn-warning btn-sm p-1" title="Edit">
                                     <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm p-1" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                </a>
+
+                                <!-- Delete -->
+                                <form action="#" method="POST" class="d-inline"
+                                      onsubmit="return confirm('Hapus transaksi ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger btn-sm p-1" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+
                             </td>
                         </tr>
+
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-danger">
+                                Tidak ada data ditemukan.
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
 
                 </table>
@@ -389,19 +421,12 @@
             <div class="d-flex justify-content-between align-items-center mt-3">
 
                 <div>
-                    Showing 1 to 5 of 50 entries
+                    Showing {{ $data->firstItem() }} to {{ $data->lastItem() }}
+                    of {{ $data->total() }} entries
                 </div>
 
                 <nav>
-                    <ul class="pagination mb-0">
-                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">5</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
+                    {{ $data->links('pagination::bootstrap-4') }}
                 </nav>
 
             </div>
@@ -411,6 +436,72 @@
 
 </div>
 <!-- End of Page Content -->
+
+
+
+<!-- ========================= -->
+<!-- MODAL DETAIL PENJUALAN   -->
+<!-- ========================= -->
+<div class="modal fade" id="modalDetail" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title font-weight-bold">Detail Penjualan</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- Info Utama -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="border p-3 rounded">
+                            <p class="mb-1"><b>Kode Transaksi:</b></p>
+                            <p id="d_kode" class="text-dark"></p>
+
+                            <p class="mb-1"><b>Tanggal:</b></p>
+                            <p id="d_tanggal" class="text-dark"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="border p-3 rounded">
+                            <p class="mb-1"><b>User:</b></p>
+                            <p id="d_user" class="text-dark"></p>
+
+                            <p class="mb-1"><b>Total Bayar:</b></p>
+                            <p class="text-dark">Rp <span id="d_total"></span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Detail Produk -->
+                <h6 class="font-weight-bold mb-3">Detail Produk</h6>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Kode</th>
+                                <th>Nama Produk</th>
+                                <th>Qty</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelDetailProduk"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
 
 
 
@@ -498,24 +589,48 @@
             });
         });
     </script>
-   <script>
-    $(document).ready(function(){
-        $('.editBtn').click(function(){
-            var id = $(this).data('id');
-            var nama = $(this).data('nama');
 
-            // Set value input modal
-            $('#edit_nama_kategori').val(nama);
+    <script>
+    const URL_DETAIL_PENJUALAN = "{{ route('superadmin.penjualan.show', ':id') }}";
+</script>
+<script src="{{ asset('js/superadmin/penjualan.js') }}"></script>
 
-            // Set action form ke route update dengan ID kategori
-            $('#editForm').attr('action', '/superadmin/kategoriproduk/update/' + id);
+    {{-- <script>
+$(document).on('click', '.btn-detail', function() {
 
-            // Tampilkan modal
-            $('#editKategoriModal').modal('show');
-        });
+    let id = $(this).data('id');
+
+    $.ajax({
+        url: "{{ route('superadmin.penjualan.show', '') }}/" + id,
+        type: "GET",
+        success: function(res) {
+
+            $("#d_kode").text(res.kode_transaksi);
+            $("#d_tanggal").text(res.tgl_penjualan);
+            $("#d_user").text(res.nama_user ?? "-");
+            $("#d_total").text(Number(res.total_bayar).toLocaleString('id-ID'));
+
+            let rows = "";
+
+            res.detail.forEach(item => {
+                rows += `
+                    <tr>
+                        <td>${item.kode_produk}</td>
+                        <td>${item.produk ? item.produk.nama_produk : '-'}</td>
+                        <td>${item.jumlah}</td>
+                        <td>Rp ${Number(item.subtotal).toLocaleString('id-ID')}</td>
+                    </tr>
+                `;
+            });
+
+            $("#tabelDetailProduk").html(rows);
+
+            $("#modalDetail").modal('show');
+        }
     });
-    </script>
-    <script src="{{ asset('js/superadmin/pembelian.js') }}"></script>
+
+});
+</script> --}}
 
 
 

@@ -285,43 +285,42 @@
 
 
 <!-- ===================================================================================================================================================== -->
-
-
-<!-- Begin Page Content -->
 <div class="container-fluid">
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800 font-weight-bold">Daftar Transaksi Pembelian</h1>
     </div>
-<!-- Filter Header -->
-<div class="card shadow mb-4 card-header-transaksi">
-    <div class="card-body">
-        <form id="filterForm">
-            <div class="form-row align-items-end">
-                <div class="form-group col-auto mr-3">
-                    <label for="filter_supplier">Supplier</label>
-                    <select class="form-control" id="filter_supplier" style="width:250px;">
-                        <option value="">-- Semua Supplier --</option>
-                        <option value="1">CV Agro Sejahtera</option>
-                        <option value="2">PT Bumi Makmur</option>
-                    </select>
+
+    <!-- Filter Header -->
+    <div class="card shadow mb-4 card-header-transaksi">
+        <div class="card-body">
+            <form id="filterForm" method="GET" action="{{ route('superadmin.pembelian.index') }}">
+                <div class="form-row align-items-end">
+                    <div class="form-group col-auto mr-3">
+                        <label for="filter_supplier">Supplier</label>
+                        <select class="form-control" id="filter_supplier" name="supplier" style="width:250px;">
+                            <option value="">-- Semua Supplier --</option>
+                            @foreach($suppliers as $supplier)
+                                <option value="{{ $supplier->id_supplier }}" {{ request('supplier') == $supplier->id_supplier ? 'selected' : '' }}>
+                                    {{ $supplier->nama_supplier }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group col-auto mr-3">
+                        <label for="filter_tanggal">Tanggal</label>
+                        <input type="date" class="form-control" id="filter_tanggal" name="tanggal" style="width:250px;" value="{{ request('tanggal') }}">
+                    </div>
+                    <div class="form-group col-auto">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter mr-1"></i> Filter
+                        </button>
+                    </div>
                 </div>
-                <div class="form-group col-auto mr-3">
-                    <label for="filter_tanggal">Tanggal</label>
-                    <input type="date" class="form-control" id="filter_tanggal" style="width:250px;">
-                </div>
-                <div class="form-group col-auto">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-filter mr-1"></i> Filter
-                    </button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
-
-
 
     <!-- Tabel Transaksi -->
     <div class="card shadow mb-4">
@@ -329,10 +328,10 @@
             <h6 class="m-0 font-weight-bold text-primary">Daftar Transaksi</h6>
             <div class="form-inline">
                 <label class="mr-2">Show</label>
-                <select class="form-control form-control-sm mr-2" id="showEntries">
-                    <option>5</option>
-                    <option>10</option>
-                    <option>15</option>
+                <select class="form-control form-control-sm mr-2" id="showEntries" onchange="changeEntries(this.value)">
+                    <option value="5" {{ request('limit') == 5 ? 'selected' : '' }}>5</option>
+                    <option value="10" {{ request('limit') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="15" {{ request('limit') == 15 ? 'selected' : '' }}>15</option>
                 </select>
                 <label>entries</label>
             </div>
@@ -350,55 +349,50 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                   <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>TRX202511140001</td>
-                        <td>2025-11-14</td>
-                        <td>CV Agro Sejahtera</td>
-                        <td>Rp 1.500.000</td>
-                      <td>
-                        <button class="btn btn-sm p-1" title="Detail" style="background-color:#558049; color:#fff; border:none;">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-warning btn-sm p-1" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-danger btn-sm p-1" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
+                    <tbody>
+                        @forelse($pembelian as $key => $p)
+                            <tr>
+                                <td>{{ $pembelian->firstItem() + $key }}</td>
+                                <td>{{ $p->kode_transaksi }}</td>
+                                <td>{{ $p->tgl_pembelian }}</td>
+                                <td>{{ $p->supplier->nama_supplier ?? '-' }}</td>
+                                <td>Rp {{ number_format($p->total_bayar, 0, ',', '.') }}</td>
+                                <td>
+                                    <a href="{{ route('superadmin.pembelian.show', $p->id) }}" style="background-color:#558049; color:#fff; border:none;" class="btn btn-sm btn-success p-1" title="Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('superadmin.pembelian.edit', $p->id) }}" class="btn btn-warning btn-sm p-1" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('superadmin.pembelian.destroy', $p->id_pembelian) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger btn-sm p-1" title="Delete" onclick="return confirm('Hapus transaksi ini?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
 
-                    </tr>
-                </tbody>
-
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="6" class="text-center">Data tidak ditemukan.</td></tr>
+                        @endforelse
+                    </tbody>
                 </table>
             </div>
 
             <!-- Pagination -->
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <div>
-                    Showing 1 to 5 of 50 entries
+                    Showing {{ $pembelian->firstItem() ?? 0 }} to {{ $pembelian->lastItem() ?? 0 }} of {{ $pembelian->total() ?? 0 }} entries
                 </div>
-                <nav>
-                    <ul class="pagination mb-0">
-                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">5</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                </nav>
+                {{ $pembelian->appends(request()->query())->links() }}
             </div>
 
         </div>
     </div>
 
 </div>
-<!-- End of Page Content -->
-
 
 
 
@@ -504,7 +498,13 @@
     });
     </script>
     <script src="{{ asset('js/superadmin/pembelian.js') }}"></script>
-
+    <script>
+function changeEntries(value) {
+    const url = new URL(window.location);
+    url.searchParams.set('limit', value);
+    window.location = url.toString();
+}
+</script>
 
 
 </body>

@@ -112,7 +112,7 @@
             </li>
 
             <!-- Nav Item - Penjualan -->
-            <li class="nav-item active">
+            <li class="nav-item ">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePenjualan"
                     aria-expanded="true" aria-controls="collapsePenjualan">
                     <i class="fas fa-cash-register"></i>
@@ -128,7 +128,7 @@
             </li>
 
             <!-- Nav Item - Pengeluaran -->
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="{{ url('/superadmin/pengeluaran') }}">
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Pengeluaran</span>
@@ -303,13 +303,18 @@
     <!-- Filter Header -->
     <div class="card shadow mb-4 card-header-transaksi">
         <div class="card-body">
-            <form id="filterForm">
+            <form method="GET" action="{{ route('superadmin.pengeluaran.index') }}">
                 <div class="form-row align-items-end">
 
                     <!-- Filter Tanggal -->
                     <div class="form-group col-auto mr-3">
                         <label for="filter_tanggal">Tanggal</label>
-                        <input type="date" class="form-control" id="filter_tanggal" style="width:250px;">
+                        <input type="date"
+                            class="form-control"
+                            name="tgl"
+                            id="filter_tanggal"
+                            style="width:250px;"
+                            value="{{ request('tgl') }}">
                     </div>
 
                     <!-- Tombol Filter -->
@@ -323,6 +328,7 @@
             </form>
         </div>
     </div>
+
 
     <!-- Tabel Pengeluaran -->
     <div class="card shadow mb-4">
@@ -359,24 +365,38 @@
                     </thead>
 
                     <tbody>
-                        <!-- Contoh data -->
+                    @php $no = 1; @endphp
+                    @foreach($pengeluaran as $row)
                         <tr>
-                            <td>1</td>
-                            <td>2025-11-14</td>
-                            <td>Operasional</td>
-                            <td>Pembelian ATK</td>
-                            <td>Rp 500.000</td>
+                            <td>{{ $no++ }}</td>
+                            <td>{{ $row->tgl_pengeluaran }}</td>
+                            <td>{{ $row->kategori }}</td>
+                            <td>{{ $row->keterangan }}</td>
+                            <td>Rp {{ number_format($row->nominal, 0, ',', '.') }}</td>
                             <td>
-                                <button class="btn btn-warning btn-sm p-1" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm p-1" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
+                        <!-- Tombol Edit -->
+                        <button class="btn btn-warning btn-sm p-1" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
 
+                        <!-- Tombol Hapus -->
+                        <form action="{{ route('superadmin.pengeluaran.destroy', $row->id_pengeluaran) }}"
+                            method="POST"
+                            style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+
+                            <button class="btn btn-danger btn-sm p-1"
+                                    title="Delete"
+                                    onclick="return confirm('Yakin ingin menghapus data ini?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+
+                        </tr>
+                    @endforeach
+                    </tbody>
                 </table>
             </div>
 
@@ -516,4 +536,3 @@
 
 </body>
 </html>
-
